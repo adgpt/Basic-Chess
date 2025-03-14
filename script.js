@@ -1,11 +1,10 @@
 // Initialize the chess game using Chess.js library
-// This creates a new game instance with the standard starting position
 const game = new Chess();
 
 /**
- * Renders the chess board and pieces dynamically
- * Creates an 8x8 grid of squares and places chess pieces according to the current game state
- * Each square is given appropriate styling and event listeners for interaction
+ * Renders the chess board and pieces dynamically.
+ * Creates an 8x8 grid of squares and places chess pieces according to the current game state.
+ * Each square is styled and has event listeners for interaction.
  */
 function renderBoard() {
   const boardContainer = document.getElementById('board');
@@ -47,35 +46,35 @@ function renderBoard() {
       boardContainer.appendChild(squareEl);
     }
   }
+  // Update move history and turn indicator after rendering the board
+  updateHistoryDisplay();  // Feature 1: Persistent move history
+  updateTurnIndicator();   // Feature 2: Turn indicator
 }
 
 // Tracks the currently selected square for move execution
 let selectedSquare = null;
 
 /**
- * Handles click events on board squares
- * Implements the core game interaction logic:
- * 1. If no square is selected, shows valid moves for the clicked piece
- * 2. If a square is already selected, attempts to make a move
- * @param {Event} e - The click event object
+ * Handles click events on board squares.
+ * If no square is selected, shows valid moves for the clicked piece.
+ * If a square is already selected, attempts to make a move.
  */
 function handleSquareClick(e) {
   const clickedSquare = e.currentTarget.getAttribute('data-square');
   
   if (!selectedSquare) {
-    // If no square is selected, check for valid moves on the clicked square
+    // Check for valid moves from the clicked square
     const moves = game.moves({ square: clickedSquare, verbose: true });
-    if (moves.length === 0) return; // No moves available
+    if (moves.length === 0) return; // No valid moves
     selectedSquare = clickedSquare;
     highlightSquare(clickedSquare);
     moves.forEach(move => highlightSquare(move.to));
   } else {
-    // Attempt to move from the selected square to the clicked square
+    // Attempt the move from the selected square to the clicked square
     const move = game.move({ from: selectedSquare, to: clickedSquare, promotion: 'q' });
     clearHighlights();
     selectedSquare = null;
     if (move) {
-      // If move is successful, re-render board and check game state
       renderBoard();
       checkGameStatus();
     }
@@ -83,9 +82,8 @@ function handleSquareClick(e) {
 }
 
 /**
- * Adds visual highlighting to a square on the board
- * Used to show the selected piece and its valid moves
- * @param {string} squareId - The algebraic notation of the square (e.g., "e4")
+ * Highlights a square visually.
+ * Used to indicate selected squares and valid moves.
  */
 function highlightSquare(squareId) {
   const squareEl = document.querySelector(`.square[data-square="${squareId}"]`);
@@ -95,17 +93,16 @@ function highlightSquare(squareId) {
 }
 
 /**
- * Removes highlighting from all squares on the board
- * Called after a move is made or when deselecting a piece
+ * Clears all square highlights.
+ * Typically called after a move is made or selection is canceled.
  */
 function clearHighlights() {
   document.querySelectorAll('.square').forEach(sq => sq.classList.remove('highlight'));
 }
 
 /**
- * Checks the current game state and displays appropriate messages
- * Handles checkmate, stalemate, and check conditions
- * Shows a modal dialog for game-ending states
+ * Checks the current game state for checkmate, stalemate, or check.
+ * Displays a modal dialog if the game is over.
  */
 function checkGameStatus() {
   if (game.in_checkmate()) {
@@ -117,8 +114,31 @@ function checkGameStatus() {
   }
 }
 
-// DOM elements for the game over modal dialog
-// Used to display game end messages and provide restart functionality
+/**
+ * Updates the move history display panel.
+ * Lists each move made in the game.
+ */
+function updateHistoryDisplay() {
+  const historyList = document.getElementById('historyList');
+  historyList.innerHTML = '';
+  const history = game.history();
+  history.forEach((move, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${index + 1}. ${move}`;
+    historyList.appendChild(li);
+  });
+}
+
+/**
+ * Updates the turn indicator to display whose turn it is.
+ */
+function updateTurnIndicator() {
+  const turnIndicator = document.getElementById('turnIndicator');
+  const turn = game.turn() === 'w' ? 'White' : 'Black';
+  turnIndicator.textContent = `Turn: ${turn}`;
+}
+
+// Modal handling for game-over messages and restart functionality
 const modal = document.getElementById('gameModal');
 const gameMessage = document.getElementById('gameMessage');
 const restartButton = document.getElementById('restartButton');
@@ -136,6 +156,42 @@ restartButton.addEventListener('click', () => {
   hideModal();
   game.reset();
   renderBoard();
+});
+
+// Feature 3: Undo Options
+document.getElementById('undoLastMove').addEventListener('click', () => {
+  game.undo();
+  renderBoard();
+});
+
+document.getElementById('undoTwoMoves').addEventListener('click', () => {
+  game.undo();
+  game.undo();
+  renderBoard();
+});
+
+// Feature 4: Save & Load Game Functionality (with move history)
+document.getElementById('saveGame').addEventListener('click', () => {
+  // Save current board state and move history to localStorage
+  localStorage.setItem('chessGameFen', game.fen());
+  localStorage.setItem('chessGameHistory', JSON.stringify(game.history()));
+  alert('Game saved!');
+});
+
+document.getElementById('loadGame').addEventListener('click', () => {
+  const savedHistory = localStorage.getItem('chessGameHistory');
+  if (savedHistory) {
+    const moves = JSON.parse(savedHistory);
+    // Reset the game and replay the saved moves to restore full state and history
+    game.reset();
+    moves.forEach(move => {
+      game.move(move);
+    });
+    renderBoard();
+    alert('Game loaded!');
+  } else {
+    alert('No saved game found.');
+  }
 });
 
 // Initialize the board when the page loads

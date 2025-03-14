@@ -1,117 +1,245 @@
 :root {
-    --light-square: #f0d9b5;
-    --dark-square: #b58863;
-    --highlight: rgba(255, 255, 0, 0.5);
-  }
-  
-  /* Global resets & styles */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-  }
-  
-  /* Header styling */
-  header {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  /* Chess board styling */
+  --light-square: #f0d9b5;
+  --dark-square: #b58863;
+  --highlight: rgba(255, 255, 0, 0.5);
+}
+
+/* Global resets & body style */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+}
+
+/* Header styling */
+header {
+  text-align: center;
+  padding: 20px;
+}
+
+/* Controls styling */
+#controls {
+  text-align: center;
+  margin: 10px;
+}
+#controls button {
+  margin: 5px;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+/* Turn indicator style */
+#turnIndicator {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* Chess board styling */
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 60px);
+  grid-template-rows: repeat(8, 60px);
+  gap: 1px;
+  margin: 20px auto;
+  max-width: 480px;
+  border: 2px solid #333;
+}
+
+/* Chess square styling */
+.square {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.square.light {
+  background-color: var(--light-square);
+}
+.square.dark {
+  background-color: var(--dark-square);
+}
+.square.highlight {
+  background-color: var(--highlight);
+}
+
+/* Chess piece styling with smooth movement */
+.piece {
+  font-size: 2rem;
+  transition: transform 0.3s ease-in-out;
+  position: absolute;
+}
+
+/* Move history styling */
+#moveHistory {
+  text-align: center;
+  margin-top: 20px;
+}
+#historyList {
+  list-style: none;
+  padding: 0;
+}
+
+/* Modal overlay styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal.hidden {
+  display: none;
+}
+.modal-content {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.modal-content p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+.modal-content button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Accessibility: Focus style for keyboard navigation */
+.square:focus {
+  outline: 2px solid #ff0;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
   .board {
-    display: grid;
-    grid-template-columns: repeat(8, 60px);
-    grid-template-rows: repeat(8, 60px);
-    gap: 1px;
-    margin: 20px auto;
-    max-width: 480px;
-    border: 2px solid #333;
+    grid-template-columns: repeat(8, 40px);
+    grid-template-rows: repeat(8, 40px);
+    max-width: 320px;
   }
-  
-  /* Chess square styling */
   .square {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    width: 40px;
+    height: 40px;
   }
-  .square.light {
-    background-color: var(--light-square);
-  }
-  .square.dark {
-    background-color: var(--dark-square);
-  }
-  .square.highlight {
-    background-color: var(--highlight);
-  }
-  
-  /* Chess piece styling with smooth movement */
   .piece {
-    font-size: 2rem;
-    transition: transform 0.3s ease-in-out;
-    position: absolute;
+    font-size: 1.5rem;
   }
-  
-  /* Modal overlay styling */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+}
+
+/* Animation for piece movement */
+.piece.move {
+  animation: move 0.3s ease-in-out;
+}
+
+@keyframes move {
+  0% {
+    transform: translate(0, 0);
   }
-  .modal.hidden {
-    display: none;
+  50% {
+    transform: translate(0, -10px);
   }
-  .modal-content {
-    background: #fff;
-    padding: 20px 30px;
-    border-radius: 5px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  100% {
+    transform: translate(0, 0);
   }
-  .modal-content p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
+}
+
+/* Animation for piece capture */
+.piece.capture {
+  animation: capture 0.3s ease-in-out;
+}
+
+@keyframes capture {
+  0% {
+    transform: scale(1);
   }
-  .modal-content button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  50% {
+    transform: scale(1.2);
   }
-  
-  /* Accessibility: Focus style for keyboard navigation */
-  .square:focus {
-    outline: 2px solid #ff0;
+  100% {
+    transform: scale(1);
   }
-  
-  /* Responsive design for smaller screens */
-  @media (max-width: 600px) {
-    .board {
-      grid-template-columns: repeat(8, 40px);
-      grid-template-rows: repeat(8, 40px);
-      max-width: 320px;
-    }
-    .square {
-      width: 40px;
-      height: 40px;
-    }
-    .piece {
-      font-size: 1.5rem;
-    }
+}
+
+/* Animation for piece promotion */
+.piece.promote {
+  animation: promote 0.3s ease-in-out;
+}
+
+@keyframes promote {
+  0% {
+    transform: translate(0, 0);
   }
-  
+  50% {
+    transform: translate(0, -10px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* Animation for piece check */
+.piece.check {
+  animation: check 0.3s ease-in-out;
+}
+
+@keyframes check {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animation for piece checkmate */
+.piece.checkmate {
+  animation: checkmate 0.3s ease-in-out;
+}
+
+@keyframes checkmate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+} 
+
+/* Animation for piece stalemate */
+.piece.stalemate {
+  animation: stalemate 0.3s ease-in-out;
+}
+
+@keyframes stalemate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

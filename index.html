@@ -10,10 +10,21 @@
 </head>
 <body>
   <header>
-    <h1>Vanilla Chess Game MVP</h1>
+    <h1>Chess Game</h1>
   </header>
   <main>
+    <div id="controls">
+      <div id="turnIndicator"></div>
+      <button id="undoLastMove">Undo Last Move</button>
+      <button id="undoTwoMoves">Undo Last Two Moves</button>
+      <button id="saveGame">Save Game</button>
+      <button id="loadGame">Load Game</button>
+    </div>
     <div id="board" class="board"></div>
+    <div id="moveHistory">
+      <h3>Move History</h3>
+      <ul id="historyList"></ul>
+    </div>
   </main>
   <!-- Modal for displaying game status (checkmate, stalemate, etc.) -->
   <div id="gameModal" class="modal hidden">
