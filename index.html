@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vanilla Chess Game MVP</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Include Chess.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Vanilla Chess Game MVP</h1>
+  </header>
+  <main>
+    <div id="board" class="board"></div>
+  </main>
+  <!-- Modal for displaying game status (checkmate, stalemate, etc.) -->
+  <div id="gameModal" class="modal hidden">
+    <div class="modal-content">
+      <p id="gameMessage"></p>
+      <button id="restartButton">Restart Game</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
